@@ -26,7 +26,7 @@
 		<Category>Client Access</Category>
 		<Name>Client Access Namespaces</Name>
 		<Description>Check if multiple namespaces exist for a protocol within the same AD site.</Description>
-		<Reference>http://blogs.technet.com/b/exchange/archive/2015/10/06/namespace-planning-in-exchange-2016.aspx</Reference>
+		<Reference>http://exchangeserverpro.com/exchange-best-practices-client-access-namespaces/</Reference>
 		<IfPassedComments>All Exchange sites have a single namespace per HTTPS protocol.</IfPassedComments>
 		<IfFailedComments>One or more Exchange sites has more than one namespace per HTTPS protocol.</IfFailedComments>
 	</Test>
@@ -51,4 +51,13 @@
 		<IfFailedComments>One or more Exchange databases has not been backed up within the last 24 hours.</IfFailedComments>
 	</Test>
 	
+	<Test>
+		<Id>AD001</Id>
+		<Category>Active Directory</Category>
+		<Name>AD Domain Level</Name>
+		<Description>Check that the domain is at a Windows 2008 or higher level.</Description>
+		<Reference>https://technet.microsoft.com/en-us/library/bb691354(v=exchg.160).aspx</Reference>
+		<IfPassedComments>One or more domains is above the Windows 2008 functional level.</IfPassedComments>
+		<IfFailedComments>One or more domains is below the Windows 2008 functional level.</IfFailedComments>
+	</Test>
 </Tests>
