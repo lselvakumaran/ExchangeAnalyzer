@@ -14,7 +14,7 @@ Function Run-CAS001()
     $FailedList = @()
     $ErrorList = @()
 
-    $sites = @($ClientAccessServers | Group-Object -Property:Site | Select Name)
+    $sites = @($ClientAccessServers | Group-Object -Property:Site | Select-Object -Property Name)
 
     # Get the URLs for each site, and if more than one URL exists for a HTTPS service in the same site it is
     # considered a fail.
@@ -47,13 +47,13 @@ Function Run-CAS001()
 
         $SiteAutodiscoverUrls = @()
 
-        $CASinSite = @($ClientAccessServers | Where {$_.Site -eq $site.Name})
+        $CASinSite = @($ClientAccessServers | Where-Object -FilterScript  {$_.Site -eq $site.Name})
 
         Write-Verbose "Getting OWA Urls for site $SiteName"
         foreach ($CAS in $CASinSite)
         {
             Write-Verbose "Server: $($CAS.Name)"
-            $CASOWAUrls = @($CASURLs | Where {$_.Name -ieq $CAS.Name} | Select OWAInternal,OWAExternal)
+            $CASOWAUrls = @($CASURLs | Where-Object -FilterScript  {$_.Name -ieq $CAS.Name} | Select-Object -Property OWAInternal,OWAExternal)
             foreach ($CASOWAUrl in $CASOWAUrls)
             {
                 if (!($SiteOWAInternalUrls -Contains $CASOWAUrl.OWAInternal.ToLower()) -and ($CASOWAUrl.OWAInternal.ToLower() -ne $null))
@@ -73,7 +73,7 @@ Function Run-CAS001()
         Write-Verbose "Getting ECP Urls for site $SiteName"
         foreach ($CAS in $CASinSite)
         {
-            $CASECPUrls = @($CASURLs | Where {$_.Name -ieq $CAS.Name} | Select ECPInternal,ECPExternal)
+            $CASECPUrls = @($CASURLs | Where-Object -FilterScript  {$_.Name -ieq $CAS.Name} | Select-Object -Property ECPInternal,ECPExternal)
             foreach ($CASECPUrl in $CASECPUrls)
             {
                 if (!($SiteECPInternalUrls -Contains $CASECPUrl.ECPInternal.ToLower()) -and ($CASECPUrl.ECPInternal.ToLower() -ne $null))
@@ -93,7 +93,7 @@ Function Run-CAS001()
         Write-Verbose "Getting OAB Urls for site $SiteName"
         foreach ($CAS in $CASinSite)
         {
-            $CASOABUrls = @($CASURLs | Where {$_.Name -ieq $CAS.Name} | Select OABInternal,OABExternal)
+            $CASOABUrls = @($CASURLs | Where-Object -FilterScript  {$_.Name -ieq $CAS.Name} | Select-Object -Property OABInternal,OABExternal)
             foreach ($CASOABUrl in $CASOABUrls)
             {
                 if (!($SiteOABInternalUrls -Contains $CASOABUrl.OABInternal.ToLower()) -and ($CASOABUrl.OABInternal.ToLower() -ne $null))
@@ -113,7 +113,7 @@ Function Run-CAS001()
         Write-Verbose "Getting RPC Urls for site $SiteName"
         foreach ($CAS in $CASinSite)
         {
-            $OA = @($CASURLs | Where {$_.Name -ieq $CAS.Name} | Select OAInternal,OAExternal)
+            $OA = @($CASURLs | Where-Object -FilterScript  {$_.Name -ieq $CAS.Name} | Select-Object -Property OAInternal,OAExternal)
             [string]$OAInternalHostName = $OA.OAInternal
             [string]$OAExternalHostName = $OA.OAExternal
 
@@ -136,7 +136,7 @@ Function Run-CAS001()
         Write-Verbose "Getting EWS Urls for site $SiteName"
         foreach ($CAS in $CASinSite)
         {
-            $CASEWSUrls = @($CASURLs | Where {$_.Name -ieq $CAS.Name} | Select EWSInternal,EWSExternal)
+            $CASEWSUrls = @($CASURLs | Where-Object -FilterScript  {$_.Name -ieq $CAS.Name} | Select-Object -Property EWSInternal,EWSExternal)
             foreach ($CASEWSUrl in $CASEWSUrls)
             {
                 if (!($SiteEWSInternalUrls -Contains $CASEWSUrl.EWSInternal.ToLower()) -and ($CASEWSUrl.EWSInternal.ToLower() -ne $null))
@@ -156,7 +156,7 @@ Function Run-CAS001()
         Write-Verbose "Getting MAPI Urls for site $SiteName"
         foreach ($CAS in $CASinSite)
         {
-            $CASMAPIUrls = @($CASURLs | Where {$_.Name -ieq $CAS.Name} | Select MAPIInternal,MAPIExternal)
+            $CASMAPIUrls = @($CASURLs | Where-Object -FilterScript  {$_.Name -ieq $CAS.Name} | Select-Object -Property MAPIInternal,MAPIExternal)
             foreach ($CASMAPIUrl in $CASMAPIUrls)
             {
                 if (!($SiteMAPIInternalUrls -Contains $CASMAPIUrl.MAPIInternal.ToLower()) -and ($CASMAPIUrl.MAPIInternal.ToLower() -ne $null))
@@ -176,7 +176,7 @@ Function Run-CAS001()
         Write-Verbose "Getting ActiveSync Urls for site $SiteName"
         foreach ($CAS in $CASinSite)
         {
-            $CASActiveSyncUrls = @($CASURls | Where {$_.Name -eq $CAS.Name} | Select EASInternal,EASExternal)
+            $CASActiveSyncUrls = @($CASURls | Where-Object -FilterScript  {$_.Name -eq $CAS.Name} | Select-Object -Property EASInternal,EASExternal)
             foreach ($CASActiveSyncUrl in $CASActiveSyncUrls)
             {
                 if (!($SiteActiveSyncInternalUrls -Contains $CASActiveSyncUrl.EASInternal.ToLower()) -and ($CASActiveSyncUrl.EASInternal.ToLower() -ne $null))
@@ -197,7 +197,7 @@ Function Run-CAS001()
         foreach ($CAS in $CASinSite)
         {
             #$CASServer = Get-ClientAccessServer $CAS.Name
-            $AutoDUrl = @($CASURLs | Where {$_.Name -ieq $CAS.Name} | Select AutoD)
+            $AutoDUrl = @($CASURLs | Where-Object -FilterScript  {$_.Name -ieq $CAS.Name} | Select-Object -Property AutoD)
             [string]$AutodiscoverSCP = $AutoDUrl
             $CASAutodiscoverUrl = $AutodiscoverSCP.Replace("/Autodiscover.xml","")
             if (!($SiteAutodiscoverUrls -Contains $CASAutodiscoverUrl.ToLower())) {$SiteAutodiscoverUrls += $CASAutodiscoverUrl.ToLower()}

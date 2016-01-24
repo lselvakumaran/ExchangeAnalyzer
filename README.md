@@ -74,6 +74,8 @@ Internet Explorer will automatically open the HTML report when the script has fi
 - Michael B Smith ([Blog](http://theessentialexchange.com/) | [Twitter](https://twitter.com/essentialexch))
 - Brian Desmond ([Blog](http://www.briandesmond.com/) | [Twitter](https://twitter.com/brdesmond))
 - Damian Scoles ([Blog](https://justaucguy.wordpress.com/))
+- Wojciech Sciesinski ( [Github] (https://github.com/it-praktyk) | [Twitter](https://twitter.com/ITpraktyk) )
+
 
 ##License
 

@@ -17,8 +17,8 @@ Function Run-CAS002()
     {
         $HasUrlsWithFQDN = $false        
         $serverFQDN = $CAS.Fqdn.ToLower()
-        $serverURLs = @($CASURLs | Where {$_.Name -ieq $CAS.Name})
-        $propertyNames = @($serverURLs | Get-Member -Type NoteProperty | Where {$_.Name -ne "Name"} | Select Name)
+        $serverURLs = @($CASURLs | Where-Object -FilterScript  {$_.Name -ieq $CAS.Name})
+        $propertyNames = @($serverURLs | Get-Member -Type NoteProperty | Where-Object -FilterScript  {$_.Name -ne "Name"} | Select-Object -Property Name)
         foreach ($name in $propertyNames)
         {
             Write-Verbose "Checking URL $($serverURLs."$($name.name)")"
