@@ -53,8 +53,8 @@ Function Run-EXSRV002()
             }
         }
 
-        $Exchange2013Builds = $Exchange2013Builds | Sort 'Product Name','Release Date' -Descending
-        $Exchange2016Builds = $Exchange2016Builds | Sort 'Product Name','Release Date' -Descending
+        $Exchange2013Builds = $Exchange2013Builds | Sort-Object -Property 'Product Name','Release Date' -Descending
+        $Exchange2016Builds = $Exchange2016Builds | Sort-Object -Property 'Product Name','Release Date' -Descending
     
         foreach($server in $ExchangeServers)
         {

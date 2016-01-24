@@ -14,7 +14,7 @@ Function Run-DB001()
     $FailedList = @()
     $ErrorList = @()
 
-    $mailboxdatabases = @($ExchangeDatabases | Where {$_.AdminDisplayVersion -like "Version 15.*" -and $_.Recovery -ne $true})
+    $mailboxdatabases = @($ExchangeDatabases | Where-Object -FilterScript  {$_.AdminDisplayVersion -like "Version 15.*" -and $_.Recovery -ne $true})
 
     if ($mailboxdatabases)
     {
