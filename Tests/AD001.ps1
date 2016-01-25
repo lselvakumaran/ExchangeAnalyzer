@@ -24,12 +24,12 @@ Function Run-AD001()
     Write-Verbose "$($domains.count) domain(s) found."
 
     # Check for other forest domains (via trusts)
-    If($? -and $Domains -ne $Null) {
+    If($? -and $Domains.Length -gt 0) {
         Write-Verbose "Checking for domain trusts to other forests."
         ForEach($Domain in $Domains) { 
             # Get list of AD Domain Trusts in each domain
-            $ADDomainTrusts = Get-ADObject -Filter {ObjectClass -eq "trustedDomain"} -Server $Domain -Properties * -EA 0
-            If($? -and $ADDomainTrusts -ne $Null) {
+            $ADDomainTrusts = Get-ADObject -Filter {ObjectClass -eq "trustedDomain"} -Server $Domain -Properties * -ErrorAction SilentlyContinue
+            If($? -and $ADDomainTrusts) {
                 Write-Verbose "Domain trusts found."
                 If($ADDomainTrusts -is [array]) {
                     [int]$ADDomainTrustsCount = $ADDomainTrusts.Count 
@@ -64,8 +64,8 @@ Function Run-AD001()
     #based on supportability matrix: https://technet.microsoft.com/library/ff728623(v=exchg.150).aspx
 
     $ExchangeVersions = @{
-                        Newest = ($ExchangeServers | Sort AdminDisplayVersion -Descending)[0].AdminDisplayVersion
-                        Oldest = ($ExchangeServers | Sort AdminDisplayVersion -Descending)[-1].AdminDisplayVersion
+                        Newest = ($ExchangeServers | Sort-Object -Property AdminDisplayVersion -Descending)[0].AdminDisplayVersion
+                        Oldest = ($ExchangeServers | Sort-Object -Property AdminDisplayVersion -Descending)[-1].AdminDisplayVersion
                         }
 
     if ($ExchangeVersions.Newest -like "Version 15.1*")
