@@ -49,6 +49,9 @@ http://exchangeanalyzer.com
 
 - Damian Scoles
     * Website: https://justaucguy.wordpress.com/
+	
+- Wojciech Sciesinski
+	* Twitter: https://twitter.com/itpraktyk
 
 ----- Additional Contributions -----
 
@@ -156,7 +159,7 @@ try
     Write-Verbose "$($ExchangeServers.Count) Exchange servers found."
 
     #Check for supported servers before continuing
-    if (($ExchangeServers | Where {$_.AdminDisplayVersion -like "Version 15.*"}).Count -eq 0)
+    if (($ExchangeServers | Where-Object -FilterScript {$_.AdminDisplayVersion -like "Version 15.*"}).Count -eq 0)
     {
         Write-Warning "No Exchange 2013 or later servers were found. Exchange Analyzer is exiting."
         EXIT
@@ -193,7 +196,7 @@ catch
 $msgString = "Determining Client Access servers"
 Write-Progress -Activity $ProgressActivity -Status $msgString -PercentComplete 8
 Write-Verbose $msgString
-$ClientAccessServers = @($ExchangeServers | Where {$_.IsClientAccessServer -and $_.AdminDisplayVersion -like "Version 15.*"})
+$ClientAccessServers = @($ExchangeServers | Where-Object -FilterScript {$_.IsClientAccessServer -and $_.AdminDisplayVersion -like "Version 15.*"})
 Write-Verbose "$($ClientAccessServers.Count) Client Access servers found."
 
 $msgString = "Collecting Exchange URLs from Client Access servers"
@@ -213,7 +216,7 @@ $NumberOfTests = ($ExchangeAnalyzerTests.Test).Count
 $TestCount = 0
 foreach ($Test in $ExchangeAnalyzerTests.ChildNodes.Id)
 {
-	$TestDescription = ($exchangeanalyzertests.Childnodes | Where {$_.Id -eq $Test}).Description
+	$TestDescription = ($exchangeanalyzertests.Childnodes | Where-Object -FilterScript {$_.Id -eq $Test}).Description
     $TestCount += 1
     $pct = $TestCount/$NumberOfTests * 100
 	Write-Progress -Activity $ProgressActivity -Status "(Test $TestCount of $NumberOfTests) $($Test): $TestDescription" -PercentComplete $pct
@@ -273,10 +276,10 @@ $IntroHtml="<h1 align=""center"">Exchange Analyzer Report</h1>
             </p>"
 
 #Count of test results
-$TotalPassed = @($report | Where {$_.TestOutcome -eq "Passed"}).Count
-$TotalWarning = @($report | Where {$_.TestOutcome -eq "Warning"}).Count
-$TotalFailed = @($report | Where {$_.TestOutcome -eq "Failed"}).Count
-$TotalInfo = @($report | Where {$_.TestOutcome -eq "Info"}).Count
+$TotalPassed = @($report | Where-Object -FilterScript {$_.TestOutcome -eq "Passed"}).Count
+$TotalWarning = @($report | Where-Object -FilterScript {$_.TestOutcome -eq "Warning"}).Count
+$TotalFailed = @($report | Where-Object -FilterScript {$_.TestOutcome -eq "Failed"}).Count
+$TotalInfo = @($report | Where-Object -FilterScript {$_.TestOutcome -eq "Info"}).Count
 
 #HTML summary table
 $SummaryTableHtml  = "<h2 align=""center"">Summary:</h2>
@@ -357,7 +360,7 @@ foreach ($server in $CASURLs)
 }
 
 #Build a list of report categories
-$reportcategories = $report | Group-Object -Property TestCategory | Select Name
+$reportcategories = $report | Group-Object -Property TestCategory | Select-Object -Property Name
 
 #Create report HTML for each category
 foreach ($reportcategory in $reportcategories)
@@ -390,7 +393,7 @@ foreach ($reportcategory in $reportcategories)
     $categoryHtmlTable += $categoryHtmlHeader
 
     #Generate each HTML table row
-    foreach ($reportline in ($report | Where {$_.TestCategory -eq $reportcategory.Name}))
+    foreach ($reportline in ($report | Where-Object -FilterScript {$_.TestCategory -eq $reportcategory.Name}))
     {
         $HtmlTableRow = "<tr>"
         $htmltablerow += "<td>$($reportline.TestID)</td>"
