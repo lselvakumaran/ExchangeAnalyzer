@@ -63,4 +63,37 @@
 		<IfPassedComments>The Active Directory forest meets the required functional level.</IfPassedComments>
 		<IfFailedComments>The Active Directory forest does not meet the required functional level.</IfFailedComments>
 	</Test>
+
+	<Test>
+		<Id>WSSRV001</Id>
+		<Category>Windows Server</Category>
+		<Name>C: Drive 30% Free Disk Space</Name>
+		<Description>Check that the C: Drive has 30% more or greater free space.</Description>
+		<Reference></Reference>
+		<IfPassedComments>The C: Drive has greater than 30% free disk space.</IfPassedComments>
+		<IfFailedComments>The C: Drive has less than 30% free disk space.</IfFailedComments>
+	</Test>
+
+	<Test>
+		<Id>WSSRV002</Id>
+		<Category>Windows Server</Category>
+		<Name>C: Drive 130 GB in Size</Name>
+		<Description>Check that the C: Drive 130 GB in size.</Description>
+		<Reference></Reference>
+		<IfPassedComments>The C: Drive is larger than 130 GB.</IfPassedComments>
+		<IfFailedComments>The C: Drive is smaller than 130 GB.</IfFailedComments>
+	</Test>
+
+	<Test>
+		<Id>WSSRV003</Id>
+		<Category>Windows Server</Category>
+		<Name>PageFile Size</Name>
+		<Description>Check that the PageFile is set to RAM + 10 MB.</Description>
+		<Reference>http://blogs.technet.com/b/exchange/archive/2014/04/03/ask-the-perf-guy-sizing-guidance-updates-for-exchange-2013-sp1.aspx</Reference>
+		<IfPassedComments>The PageFile is set to RAM + 10 MB.</IfPassedComments>
+		<IfFailedComments>The PageFile is not set to RAM + 10 MB.
+The maximum pagefile size should be 32Gb + 10 Mb
+or The Minimum and Maximum PageFile settings are not the same.</IfFailedComments>
+	</Test>
+
 </Tests>
