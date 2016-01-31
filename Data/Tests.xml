@@ -63,4 +63,15 @@
 		<IfPassedComments>The Active Directory forest meets the required functional level.</IfPassedComments>
 		<IfFailedComments>The Active Directory forest does not meet the required functional level.</IfFailedComments>
 	</Test>
+
+	<Test>
+		<Id>WSSRV003</Id>
+		<Category>Windows Server</Category>
+		<Name>PageFile Size</Name>
+		<Description>Check that the PageFile is set to RAM + 10 MB.</Description>
+		<IfPassedComments>The PageFile is set to RAM + 10 MB.</IfPassedComments>
+		<IfFailedComments>The PageFile is not set to RAM + 10 MB.
+The maximum pagefile size should be 32Gb + 10 Mb
+or The Minimum and Maximum PageFile settings are not the same.</IfFailedComments>
+	</Test>
 </Tests>
