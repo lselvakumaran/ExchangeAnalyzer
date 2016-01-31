@@ -63,4 +63,13 @@
 		<IfPassedComments>The Active Directory forest meets the required functional level.</IfPassedComments>
 		<IfFailedComments>The Active Directory forest does not meet the required functional level.</IfFailedComments>
 	</Test>
+
+	<Test>
+		<Id>WSSRV002</Id>
+		<Category>Windows Server</Category>
+		<Name>C: Drive 130 GB in Size</Name>
+		<Description>Check that the C: Drive 130 GB in size.</Description>
+		<IfPassedComments>The C: Drive is larger than 130 GB.</IfPassedComments>
+		<IfFailedComments>The C: Drive is smaller than 130 GB.</IfFailedComments>
+	</Test>
 </Tests>
