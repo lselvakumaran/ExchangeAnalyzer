@@ -8,6 +8,8 @@
 		<Description>Exchange Analyzer supports Exchange Server 2013 and 2016.</Description>
 		<IfPassedComments>All Exchange servers in the organization are Exchange 2013/2016.</IfPassedComments>
 		<IfFailedComments>One or more Exchange servers exist that are not running Exchange 2013 or 2016.</IfFailedComments>
+		<IfInfoComments/>
+		<IfWarningComments/>
 	</Test>
 	
 	<Test>
@@ -17,6 +19,8 @@
 		<Description>Check if Exchange Servers are running the latest build.</Description>
 		<IfPassedComments>All Exchange Server 2013/2016 servers are running the latest build.</IfPassedComments>
 		<IfFailedComments>One or more Exchange Server 2013/2016 servers are not running the latest build.</IfFailedComments>
+		<IfInfoComments/>
+		<IfWarningComments/>
 	</Test>
 
 	<Test>
@@ -26,6 +30,8 @@
 		<Description>Check if multiple namespaces exist for a protocol within the same AD site.</Description>
 		<IfPassedComments>All Exchange sites have a single namespace per HTTPS protocol.</IfPassedComments>
 		<IfFailedComments>One or more Exchange sites has more than one namespace per HTTPS protocol.</IfFailedComments>
+		<IfInfoComments/>
+		<IfWarningComments/>
 	</Test>
 	
 	<Test>
@@ -35,6 +41,8 @@
 		<Description>Check that CAS URLs don't contain server FQDNs.</Description>
 		<IfPassedComments>No Exchange HTTPS services have URLs containing server FQDNs.</IfPassedComments>
 		<IfFailedComments>One or more Exchange HTTPS services has a URL containing server FQDNs.</IfFailedComments>
+		<IfInfoComments/>
+		<IfWarningComments/>
 	</Test>
 
 	<Test>
@@ -44,6 +52,8 @@
 		<Description>Check that a database backup has been run in the last 24 hours.</Description>
 		<IfPassedComments>All mailbox databases have been backed up within the last 24 hours.</IfPassedComments>
 		<IfFailedComments>One or more Exchange databases has not been backed up within the last 24 hours.</IfFailedComments>
+		<IfInfoComments/>
+		<IfWarningComments/>
 	</Test>
 	
 	<Test>
@@ -53,6 +63,8 @@
 		<Description>Check that the domains are at the required level.</Description>
 		<IfPassedComments>All Active Directory domains meet the required functional level.</IfPassedComments>
 		<IfFailedComments>One or more Active Directory domains do not meet the required functional level.</IfFailedComments>
+		<IfInfoComments/>
+		<IfWarningComments/>
 	</Test>
 
 	<Test>
@@ -62,14 +74,19 @@
 		<Description>Check that the forest is at the required level.</Description>
 		<IfPassedComments>The Active Directory forest meets the required functional level.</IfPassedComments>
 		<IfFailedComments>The Active Directory forest does not meet the required functional level.</IfFailedComments>
+		<IfInfoComments/>
+		<IfWarningComments/>
 	</Test>
 
 	<Test>
 		<Id>WSSRV001</Id>
 		<Category>Windows Server</Category>
-		<Name>C: Drive 30% Free Disk Space</Name>
-		<Description>Check that the C: Drive has 30% more or greater free space.</Description>
-		<IfPassedComments>The C: Drive has greater than 30% free disk space.</IfPassedComments>
-		<IfFailedComments>The C: Drive has less than 30% free disk space.</IfFailedComments>
+		<Name>Exchange Install Drive - 30% Free Disk Space</Name>
+		<Description>Check that the Exchange Install Drive has 30% or greater free disk space.</Description>
+		<IfPassedComments>The Exchange Install Drive has greater than 30% free disk space.</IfPassedComments>
+		<IfFailedComments>The Exchange Install Drive has less than 15% free disk space.</IfFailedComments>
+		<IfWarningComments>The Exchange Install Drive has between 15% and 30% free disk space.</IfWarningComments>
+        <IfInfoComments/>
 	</Test>
+
 </Tests>
