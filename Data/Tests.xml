@@ -77,4 +77,16 @@
 		<IfWarningComments></IfWarningComments>
 		<IfFailedComments>The Active Directory forest does not meet the required functional level.</IfFailedComments>
 	</Test>
+
+	<Test>
+		<Id>WSSRV006</Id>
+		<Category>Windows Server</Category>
+		<Name>PageFile Max Size Check</Name>
+		<Description>Check that the PageFile is not greater than 32778 MB.</Description>
+		<IfPassedComments>The PageFile is not greater than 32778 MB.</IfPassedComments>
+		<IfFailedComments>The PageFile is greater than 32778 MB, which is the maximum recommended size for a pagefile.</IfFailedComments>
+		<IfInfoComments/>
+		<IfWarningComments/>
+	</Test>
+
 </Tests>
