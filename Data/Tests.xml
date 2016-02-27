@@ -77,4 +77,16 @@
 		<IfWarningComments></IfWarningComments>
 		<IfFailedComments>The Active Directory forest does not meet the required functional level.</IfFailedComments>
 	</Test>
+
+	<Test>
+		<Id>WSSRV004</Id>
+		<Category>Windows Server</Category>
+		<Name>PageFile Min Max Check</Name>
+		<Description>Check that the PageFile Maximum and Minimum sizes are the same.</Description>
+		<IfPassedComments>The PageFile Maximum and Minimum sizes are the same.</IfPassedComments>
+		<IfFailedComments>The PageFile Maximum and Minimum sizes are not set the same.</IfFailedComments>
+		<IfInfoComments/>
+	    <IfWarningComments/>
+	</Test>
+
 </Tests>
