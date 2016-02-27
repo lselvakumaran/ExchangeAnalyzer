@@ -77,4 +77,16 @@
 		<IfWarningComments></IfWarningComments>
 		<IfFailedComments>The Active Directory forest does not meet the required functional level.</IfFailedComments>
 	</Test>
+
+	<Test>
+		<Id>NET001</Id>
+		<Category>Network</Category>
+		<Name>NIC Power Management</Name>
+		<Description>Check that the Exchange Server NIC power management is set to High Performance.</Description>
+		<IfPassedComments>Exchange Server NIC power management is set to High Performance.</IfPassedComments>
+		<IfFailedComments/>
+		<IfInfoComments/>
+		<IfWarningComments>Exchange Server NIC power management is not set to High Performance.</IfWarningComments>
+	</Test>
+
 </Tests>
