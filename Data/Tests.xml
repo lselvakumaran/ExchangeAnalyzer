@@ -77,4 +77,16 @@
 		<IfWarningComments></IfWarningComments>
 		<IfFailedComments>The Active Directory forest does not meet the required functional level.</IfFailedComments>
 	</Test>
+
+	<Test>
+		<Id>WSSRV005</Id>
+		<Category>Windows Server</Category>
+		<Name>PageFile is System Managed</Name>
+		<Description>Check that the PageFile is System Managed.</Description>
+		<IfPassedComments>The PageFile is not System Managed.</IfPassedComments>
+		<IfFailedComments>The PageFile is set to be System Managed and this should be changed to RAM + 10MB in size.</IfFailedComments>
+		<IfInfoComments/>
+		<IfWarningComments/>
+	</Test>
+
 </Tests>
