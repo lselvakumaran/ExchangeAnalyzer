@@ -77,4 +77,15 @@
 		<IfWarningComments></IfWarningComments>
 		<IfFailedComments>The Active Directory forest does not meet the required functional level.</IfFailedComments>
 	</Test>
+
+	<Test>
+		<Id>WSSRV003</Id>
+		<Category>Windows Server</Category>
+		<Name>PageFile Size</Name>
+		<Description>Check that the PageFile is set to RAM + 10 MB.</Description>
+        <IfInfoComments/>
+		<IfPassedComments>The PageFile is set to RAM + 10 MB.</IfPassedComments>
+		<IfWarningComments/>
+		<IfFailedComments>The PageFile is not set to RAM + 10 MB.</IfFailedComments>
+	</Test>
 </Tests>
