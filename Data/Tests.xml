@@ -77,4 +77,15 @@
 		<IfWarningComments></IfWarningComments>
 		<IfFailedComments>The Active Directory forest does not meet the required functional level.</IfFailedComments>
 	</Test>
+
+	<Test>
+		<Id>WSSRV001</Id>
+		<Category>Windows Server</Category>
+		<Name>Exchange Install Drive - 30% Free Disk Space</Name>
+		<Description>Check that the Exchange Install Drive has 30% or greater free disk space.</Description>
+		<IfInfoComments/>
+        <IfPassedComments>The Exchange Install Drive has greater than 30% free disk space.</IfPassedComments>
+        <IfWarningComments>The Exchange Install Drive has between 15% and 30% free disk space.</IfWarningComments>		
+        <IfFailedComments>The Exchange Install Drive has less than 15% free disk space.</IfFailedComments>        
+	</Test>
 </Tests>
