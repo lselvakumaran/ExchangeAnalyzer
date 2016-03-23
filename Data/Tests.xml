@@ -99,5 +99,15 @@
 		<IfWarningComments></IfWarningComments>
 		<IfFailedComments>The Active Directory forest does not meet the required functional level.</IfFailedComments>
 	</Test>
-    
+
+	<Test>
+		<Id>WSSRV002</Id>
+		<Category>Windows Server</Category>
+		<Name>Exchange Install Drive - 130 GB in Size</Name>
+		<Description>Check that the Exchange Install Drive 130 GB in size.</Description>
+		<IfInfoComments/>
+	        <IfPassedComments>The Exchange Install Drive is larger than 130 GB.</IfPassedComments>
+		<IfWarningComments>The Exchange Install Drive is between than 100GB and 130GB.</IfWarningComments>
+        	<IfFailedComments>The Exchange Install Drive is smaller than 100 GB.</IfFailedComments>        
+	</Test>
 </Tests>
