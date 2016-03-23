@@ -68,6 +68,17 @@
 	</Test>
 
 	<Test>
+		<Id>CAS004</Id>
+		<Category>Client Access</Category>
+		<Name>RC4 Cipher</Name>
+		<Description>RC4 cipher support (should be disabled)</Description>
+		<IfInfoComments/>
+        <IfPassedComments>RC4 cipher is disabled as per best practice.</IfPassedComments>
+        <IfWarningComments/>
+		<IfFailedComments>RC4 cipher is not disabled as per best practice.</IfFailedComments>
+	</Test>
+
+	<Test>
 		<Id>DB001</Id>
 		<Category>Databases</Category>
 		<Name>Database Backups</Name>
