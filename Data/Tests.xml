@@ -45,6 +45,28 @@
 		<IfFailedComments>One or more Exchange HTTPS services has a URL containing server FQDNs.</IfFailedComments>
 	</Test>
 
+    <Test>
+		<Id>POP001</Id>
+		<Category>POP</Category>
+		<Name>POP Service Status</Name>
+		<Description>Check the status of the POP services.</Description>
+		<IfInfoComments></IfInfoComments>
+		<IfPassedComments></IfPassedComments>
+		<IfWarningComments></IfWarningComments>
+		<IfFailedComments></IfFailedComments>
+	</Test>
+
+	<Test>
+		<Id>POP002</Id>
+		<Category>POP</Category>
+		<Name>POP Secure Login</Name>
+		<Description>Check that insecure POP logins are not permitted.</Description>
+		<IfInfoComments></IfInfoComments>
+		<IfPassedComments>No POP services allow insecure logins.</IfPassedComments>
+		<IfWarningComments>One or more POP services may allow insecure logins.</IfWarningComments>
+		<IfFailedComments>One or more POP services allows insecure login.</IfFailedComments>
+	</Test>
+
 	<Test>
 		<Id>DB001</Id>
 		<Category>Databases</Category>
@@ -84,8 +106,9 @@
 		<Name>Exchange Install Drive - 30% Free Disk Space</Name>
 		<Description>Check that the Exchange Install Drive has 30% or greater free disk space.</Description>
 		<IfInfoComments/>
-        <IfPassedComments>The Exchange Install Drive has greater than 30% free disk space.</IfPassedComments>
-        <IfWarningComments>The Exchange Install Drive has between 15% and 30% free disk space.</IfWarningComments>		
-        <IfFailedComments>The Exchange Install Drive has less than 15% free disk space.</IfFailedComments>        
+        	<IfPassedComments>The Exchange Install Drive has greater than 30% free disk space.</IfPassedComments>
+        	<IfWarningComments>The Exchange Install Drive has between 15% and 30% free disk space.</IfWarningComments>		
+        	<IfFailedComments>The Exchange Install Drive has less than 15% free disk space.</IfFailedComments>        
 	</Test>
+    
 </Tests>
