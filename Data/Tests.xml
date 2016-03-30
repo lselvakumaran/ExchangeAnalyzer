@@ -132,4 +132,16 @@
 		<IfInfoComments>All Exchange servers are physical servers.</IfInfoComments>
 		<IfWarningComments>One or more Exchange servers are a virtual server.</IfWarningComments>
 	</Test>
+
+	<Test>
+		<Id>TST999</Id>
+		<Category>Just a test</Category>
+		<Name>Just a test</Name>
+		<Description>Testing for merge conflicts.</Description>
+		<IfPassedComments/>
+		<IfFailedComments/>
+		<IfInfoComments>Info comment.</IfInfoComments>
+		<IfWarningComments>Warning comment.</IfWarningComments>
+	</Test>
+
 </Tests>
