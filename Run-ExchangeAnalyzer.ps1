@@ -191,8 +191,10 @@ if ($FileName) {
 #Collect information about the Exchange organization, databases, DAGs, and servers to be
 #re-used throughout the script.
 
-$ProgressActivity = "Initializing"
+#publish this for use by anyone
+$global:ExAPropertyBag = @{}
 
+$ProgressActivity = "Initializing"
 $msgString = "Collecting data about the Exchange organization"
 Write-Progress -Activity $ProgressActivity -Status $msgString -PercentComplete 0
 Write-Verbose $msgString
@@ -224,7 +226,13 @@ try
     $ExchangeDAGs = @(Get-DatabaseAvailabilityGroup -ErrorAction STOP)
     Write-Verbose "$($ExchangeDAGs.Count) DAGs found."
 
-    Write-Progress -Activity $ProgressActivity -Status "Get-ADDomain" -PercentComplete 3
+	Write-Progress -Activity $ProgressActivity -Status 'Exchange Registry Settings' -PercentComplete 2
+    foreach ($s in $ExchangeServers)
+    {
+        Set-ExAServerProperty -Server $s.Name -Property 'ExchangeInstallPath' -Value (Get-ExARegistryValue -Host $s.Name -Hive LocalMachine -Key 'SOFTWARE\Microsoft\ExchangeServer\V15\Setup' -Value 'MsiInstallPath')
+    }
+
+    Write-Progress -Activity $ProgressActivity -Status "Get-ADDomain" -PercentComplete 5
     $ADDomain = Get-ADDomain -ErrorAction STOP
  
     Write-Progress -Activity $ProgressActivity -Status "Get-ADForest" -PercentComplete 3
