@@ -45,10 +45,6 @@ http://exchangeanalyzer.com
     * Website:	http://exchangeserverpro.com
     * Twitter:	http://twitter.com/exchservpro
 
-- Mike Crowley
-    * Website: https://mikecrowley.wordpress.com/
-    * Twitter: https://twitter.com/miketcrowley
-
 - Michael B Smith
     * Website: http://theessentialexchange.com/
     * Twitter: https://twitter.com/essentialexch
@@ -67,8 +63,10 @@ https://github.com/cunninghamp/ExchangeAnalyzer/wiki/Contributors
 
 *** Change Log ***
 
+v0.2.0-Beta.4, 31/3/2016 - Fourth public beta release
+v0.1.2-Beta.3, 18/02/2016 - Third public beta release
 v0.1.1-Beta.2, 28/01/2016 - Second public beta release
-V0.1.0-Beta.1, 14/01/2016 - Public beta release
+v0.1.0-Beta.1, 14/01/2016 - Public beta release
 
 
 *** License ***
@@ -123,7 +121,7 @@ $myDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 $report = @()
 
-# What file types may be provided when creating the output file?"
+# What file types may be provided when creating the output file?
 $supportedOutputFileTypes = @("html","htm")
 
 #endregion
@@ -206,7 +204,7 @@ try
     Write-Progress -Activity $ProgressActivity -Status "Get-OrganizationConfig" -PercentComplete 1
     $ExchangeOrganization = Get-OrganizationConfig -ErrorAction STOP
     
-    Write-Progress -Activity $ProgressActivity -Status "Get-ExchangeServer" -PercentComplete 2
+    Write-Progress -Activity $ProgressActivity -Status "Get-ExchangeServer" -PercentComplete 1
     $ExchangeServersAll = @(Get-ExchangeServer -ErrorAction STOP)
     $ExchangeServers = @($ExchangeServersAll | Where {$_.AdminDisplayVersion -like "Version 15.*"})
     Write-Verbose "$($ExchangeServers.Count) Exchange servers found."
@@ -218,13 +216,13 @@ try
         EXIT
     }
 
-    Write-Progress -Activity $ProgressActivity -Status "Get-MailboxDatabase" -PercentComplete 3
+    Write-Progress -Activity $ProgressActivity -Status "Get-MailboxDatabase" -PercentComplete 2
     $ExchangeDatabases = @(Get-MailboxDatabase -Status -ErrorAction STOP)
     Write-Verbose "$($ExchangeDatabases.Count) databases found."
 
     #Do not use -Status switch here as it causes an error to be thrown. DAG status should be
     #queried later after filtering DAG list to only v15.x DAGs.
-    Write-Progress -Activity $ProgressActivity -Status "Get-DatabaseAvailabilityGroup" -PercentComplete 4
+    Write-Progress -Activity $ProgressActivity -Status "Get-DatabaseAvailabilityGroup" -PercentComplete 2
     $ExchangeDAGs = @(Get-DatabaseAvailabilityGroup -ErrorAction STOP)
     Write-Verbose "$($ExchangeDAGs.Count) DAGs found."
 
@@ -237,10 +235,10 @@ try
     Write-Progress -Activity $ProgressActivity -Status "Get-ADDomain" -PercentComplete 5
     $ADDomain = Get-ADDomain -ErrorAction STOP
  
-    Write-Progress -Activity $ProgressActivity -Status "Get-ADForest" -PercentComplete 6
+    Write-Progress -Activity $ProgressActivity -Status "Get-ADForest" -PercentComplete 3
     $ADForest = Get-ADForest -ErrorAction STOP
  
-    Write-Progress -Activity $ProgressActivity -Status "Get-ADDomainController" -PercentComplete 7
+    Write-Progress -Activity $ProgressActivity -Status "Get-ADDomainController" -PercentComplete 3
     $ADDomainControllers = @(Get-ADDomainController -filter * -ErrorAction STOP)
     Write-Verbose "$($ADDomainControllers.Count) Domain Controller(s) found."
 }
@@ -253,20 +251,20 @@ catch
 
 #Get all Exchange HTTPS URLs to use for CAS tests
 $msgString = "Determining Client Access servers"
-Write-Progress -Activity $ProgressActivity -Status $msgString -PercentComplete 8
+Write-Progress -Activity $ProgressActivity -Status $msgString -PercentComplete 4
 Write-Verbose $msgString
 $ClientAccessServers = @($ExchangeServers | Where {$_.IsClientAccessServer -and $_.AdminDisplayVersion -like "Version 15.*"})
 Write-Verbose "$($ClientAccessServers.Count) Client Access servers found."
 
 $msgString = "Collecting Exchange URLs from Client Access servers"
-Write-Progress -Activity $ProgressActivity -Status $msgString -PercentComplete 9
+Write-Progress -Activity $ProgressActivity -Status $msgString -PercentComplete 4
 Write-Verbose $msgString
 $CASURLs = @(Get-ExchangeURLs $ClientAccessServers -Verbose:($PSBoundParameters['Verbose'] -eq $true))
 Write-Verbose "CAS URLs collected from $($CASURLs.Count) servers."
 
 #Get all POP settings for CAS/MBX servers
 $msgString = "Collecting POP settings from Client Access and Mailbox servers"
-Write-Progress -Activity $ProgressActivity -Status $msgString -PercentComplete 10
+Write-Progress -Activity $ProgressActivity -Status $msgString -PercentComplete 4
 Write-Verbose $msgString
 #This needs to be processed as a foreach to work in PS remoting
 $AllPopSettings = @($ExchangeServers | foreach{Get-PopSettings -Server $_.Identity})
@@ -284,7 +282,7 @@ foreach ($Test in $ExchangeAnalyzerTests.ChildNodes.Id)
 	$TestDescription = ($exchangeanalyzertests.Childnodes | Where {$_.Id -eq $Test}).Description
     $TestCount += 1
     $pct = $TestCount/$NumberOfTests * 100
-	Write-Progress -Activity $ProgressActivity -Status "(Test $TestCount of $NumberOfTests) $($Test): $TestDescription" -PercentComplete $pct
+	Write-Progress -Activity $ProgressActivity -Status "Test $($TestCount) of $($NumberOfTests): $TestDescription" -PercentComplete $pct
 
     if (Test-Path "$($MyDir)\Tests\$($Test).ps1")
     {
@@ -350,10 +348,17 @@ $IntroHtml="<h1>Exchange Analyzer Report</h1>
             </p>"
 
 #Count of test results
-$TotalPassed = @($report | Where {$_.TestOutcome -eq "Passed"}).Count
-$TotalWarning = @($report | Where {$_.TestOutcome -eq "Warning"}).Count
-$TotalFailed = @($report | Where {$_.TestOutcome -eq "Failed"}).Count
-$TotalInfo = @($report | Where {$_.TestOutcome -eq "Info"}).Count
+$PassedItems = @($report | Where {$_.TestOutcome -eq "Passed"})
+$TotalPassed = $PassItems.Count
+
+$WarningItems = @($report | Where {$_.TestOutcome -eq "Warning"})
+$TotalWarning = $WarningItems.Count
+
+$FailedItems = @($report | Where {$_.TestOutcome -eq "Failed"})
+$TotalFailed = $FailedItems.Count
+
+$InfoItems = @($report | Where {$_.TestOutcome -eq "Info"})
+$TotalInfo = $InfoItems.Count
 
 #HTML summary table
 $SummaryTableHtml  = "<h2>Summary:</h2>
@@ -373,6 +378,71 @@ $SummaryTableHtml  = "<h2>Summary:</h2>
                       </tr>
                       </table>
                       </p>"
+
+if ($TotalFailed -gt 0)
+{
+    $SummaryFailedItemsHtml = "<p>Failed items:</p>
+                              <ul>"
+
+    foreach ($FailedItem in $FailedItems)
+    {
+        $SummaryFailedItemsHtml += "<li>$($FailedItem.Comments)</li>"
+    }
+
+    $SummaryFailedItemsHtml += "</ul>
+                                </p>"
+
+    $SummaryTableHtml += $SummaryFailedItemsHtml
+}
+
+if ($TotalWarning -gt 0)
+{
+    $SummaryWarningItemsHtml = "<p>Warning items:</p>
+                                <ul>"
+
+    foreach ($WarningItem in $WarningItems)
+    {
+        $SummaryWarningItemsHtml += "<li>$($WarningItem.Comments)</li>"
+    }
+
+    $SummaryWarningItemsHtml += "</ul>
+                                 </p>"
+
+    $SummaryTableHtml += $SummaryWarningItemsHtml
+}
+
+
+#Build table for summary of Exchange Servers in organization
+$ExchangeServersSummaryHtml = $null
+$ExchangeServersSummaryHtml += "<p>Summary of Exchange Servers:</p>
+                                <p>
+                                <table>
+                                <tr>
+                                <th>Name</th>
+                                <th>Site</th>
+                                <th>Domain</th>
+                                <th>Roles</th>
+                                <th>Edition</th>
+                                </tr>"
+
+#Will include all servers, even those not tested by Exchange Analyzer
+foreach ($Server in $ExchangeServersAll)
+{
+    #See Issue #62 in Github for why this ToString() is required for compatiblity with 2013/2016.
+    $ServerADSite = ($ExchangeServersAll | Where {$_.Name -ieq $($server.Name)}).Site.ToString() 
+    
+    $ExchangeServersSummaryHtml += "<tr>
+                                    <td>$($Server.Name)</td>
+                                    <td>$($ServerADSite.Split("/")[-1])</td>
+                                    <td>$($Server.Domain)</td>
+                                    <td>$($Server.ServerRole)</td>
+                                    <td>$($Server.Edition)</td>
+                                    </tr>"
+}
+
+$ExchangeServersSummaryHtml += "</table>
+                                </p>"
+
 
 #Build table of CAS URLs
 $CASURLSummaryHtml = $null
@@ -436,6 +506,32 @@ foreach ($server in $CASURLs)
                             </p>"
 }
 
+#Build a table of mailbox databases
+$DatabaseSummaryHtml = $null
+$DatabaseSummaryHtml += "<p>Summary of mailbox databases:</p>
+                        <p>
+                        <table>
+                        <tr>
+                        <th>Database Name</th>
+                        <th>Type</th>
+                        <th>Server/DAG</th>
+                        <th>Copies</th>
+                        </tr>"
+
+foreach ($Database in $ExchangeDatabases)
+{
+    $DatabaseSummaryHtml += "<tr>
+                            <td>$($Database.Name)</td>
+                            <td>$($Database.MasterType)</td>
+                            <td>$($Database.MasterServerOrAvailabilityGroup)</td>
+                            <td>$($Database.DatabaseCopies.Count)</td>
+                            </tr>"
+}
+
+$DatabaseSummaryHtml += "</table>
+                        </p>"
+
+
 #Build a list of report categories
 $reportcategories = $report | Group-Object -Property TestCategory | Select Name
 
@@ -445,7 +541,19 @@ foreach ($reportcategory in $reportcategories)
     $categoryHtmlTable = $null
     
     #Create HTML table headings
-    if ($($reportcategory.Name) -eq "Client Access")
+    if ($($reportcategory.Name) -eq "Exchange Servers")
+    {
+        $categoryHtmlHeader = "<h2>Category: $($reportcategory.Name)</h2>"
+        $categoryHtmlHeader += $ExchangeServersSummaryHtml
+        $categoryHtmlHeader += "<p>Results for $($reportcategory.Name) tests:</p>"
+    }
+    elseif ($($reportcategory.Name) -eq "Databases")
+    {
+        $categoryHtmlHeader = "<h2>Category: $($reportcategory.Name)</h2>"
+        $categoryHtmlHeader += $DatabaseSummaryHtml
+        $categoryHtmlHeader += "<p>Results for $($reportcategory.Name) tests:</p>"
+    }
+    elseif ($($reportcategory.Name) -eq "Client Access")
     {
         $categoryHtmlHeader = "<h2>Category: $($reportcategory.Name)</h2>"
         $categoryHtmlHeader += $CASURLSummaryHtml
