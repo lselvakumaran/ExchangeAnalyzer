@@ -248,6 +248,111 @@ catch
     EXIT
 }
 
+# Gather PageFile information for all servers to be used by tests
+$PageFileDataList = @()
+foreach ($server in $exchangeservers) {
+    $name = $server.name
+    $GB = 1048576
+
+    # CMI Queries - Test without WMI backup
+    $up=$true
+    #Check to see if the Exchange Server's PageFile is Managed
+    try {
+        $Page_Managed = Get-CIMInstance -computerName $name -ClassName Win32_ComputerSystem  -ErrorAction Stop| % {$_.AutomaticManagedPagefile}
+    } catch { 
+        $tryWMI = $true
+        Write-Verbose "$($TestID): Was not able to acquire information for $name via CIM"
+    }
+    if( $tryWMI ) {
+		## WMI depends on RPC. CIM depends on WinRM, but CIM failed, so we try WMI before we give up.
+        try {
+            $Page_Managed = Get-WMIObject -computer $name -Class Win32_ComputerSystem  -ErrorAction Stop| % {$_.AutomaticManagedPagefile}
+        } catch {
+            Write-Verbose "$($TestID): Was not able to acquire information for $name via WMI"
+            $nulldata = $true
+        }
+    }
+    # Retrieve the Minimum PageFile size
+    try {
+        $Page_min = (Get-CIMInstance -ComputerName $name -ClassName win32_pagefilesetting -Property * -ErrorAction Stop).initialsize
+    }catch {
+        $tryWMI = $true
+        Write-Verbose "$($TestID): Was not able to acquire information for $name via CIM"
+    }
+    if( $tryWMI ) {
+		## WMI depends on RPC. CIM depends on WinRM, but CIM failed, so we try WMI before we give up.
+        try {
+            $Page_min = (Get-WMIObject -Computer $name -Class win32_pagefilesetting -Property * -ErrorAction Stop).initialsize
+        } catch {
+            Write-Verbose "$($TestID): Was not able to acquire information for $name via WMI"
+            $nulldata = $true
+        }
+    }
+    # Retrieve the Maximum PageFile size
+    try {
+        $Page_max = (Get-CIMInstance -ComputerName $name -ClassName win32_pagefilesetting -Property * -ErrorAction Stop).maximumsize
+    }catch {
+        $tryWMI = $true
+        Write-Verbose "$($TestID): Was not able to acquire information for $name via CIM"
+    }
+    if( $tryWMI ) {
+		## WMI depends on RPC. CIM depends on WinRM, but CIM failed, so we try WMI before we give up.
+        try {
+            $Page_max = (Get-WMIObject -Computer $name -Class win32_pagefilesetting -Property * -ErrorAction Stop).maximumsize
+        } catch {
+            Write-Verbose "$($TestID): Was not able to acquire information for $name via WMI"
+            $nulldata = $true
+        }
+    }
+    # Retrieve the current PageFile size
+    try {
+        $Page_Current = (Get-CIMInstance -computername $name -classname Win32_PageFileUsage -ErrorAction Stop -property *).allocatedbasesize
+    }catch {
+        $tryWMI = $true
+        Write-Verbose "$($TestID): Was not able to acquire information for $name via CIM"
+    }
+    if( $tryWMI ) {
+		## WMI depends on RPC. CIM depends on WinRM, but CIM failed, so we try WMI before we give up.
+        try {
+            $Page_Current = (Get-WMIObject -computer $name -class Win32_PageFileUsage -ErrorAction Stop -property *).allocatedbasesize
+        } catch {
+            Write-Verbose "$($TestID): Was not able to acquire information for $name via WMI"
+            $nulldata =$true
+        }
+    }
+    # Retrieve the amount of RAM the Exchange Server has
+    try {
+        $RAMinMB = (Get-CIMInstance -computername $name -Classname win32_physicalmemory -ErrorAction Stop | measure-object -property capacity -sum).sum/$GB
+    }catch {
+        $tryWMI = $true
+        Write-Verbose "$($TestID): Was not able to acquire information for $name via CIM"}
+    if( $tryWMI ) {
+		## WMI depends on RPC. CIM depends on WinRM, but CIM failed, so we try WMI before we give up.
+        try {
+            $RAMinMB = (Get-WMIObject -computer $name -Class win32_physicalmemory -ErrorAction Stop | measure-object -property capacity -sum).sum/$GB
+        } catch {
+            Write-Verbose "$($TestID): Was not able to acquire information for $name via WMI"
+            $nulldata =$true
+        }
+    }
+
+    if ($nulldata) {
+        $up=$false;$managed=0;$page_min=0;$page_max=0;$currentpagefile=0;$raminmb=0
+    }
+
+    # Store data in an object (PageFileData) and then an array of objects (PageFileDataList)
+    $PageFileData = $null
+    $PageFileData = New-Object System.Object
+    $PageFileData | Add-Member -type NoteProperty -name Up -Value $up
+    $PageFileData | Add-Member -type NoteProperty -name Name -Value $Name
+    $PageFileData | Add-Member -type NoteProperty -name Page_Managed -Value $Page_Managed
+    $PageFileData | Add-Member -type NoteProperty -name Page_Min -Value $Page_Min
+    $PageFileData | Add-Member -type NoteProperty -name Page_Max -Value $Page_Max
+    $PageFileData | Add-Member -type NoteProperty -name Page_Current -Value $Page_Current
+    $PageFileData | Add-Member -type NoteProperty -name RAMInMb -Value $RAMinMB
+    $PageFileDataList += $PageFileData
+}
+
 #Get all Exchange HTTPS URLs to use for CAS tests
 $msgString = "Determining Client Access servers"
 Write-Progress -Activity $ProgressActivity -Status $msgString -PercentComplete 4
