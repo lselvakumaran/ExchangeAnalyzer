@@ -166,7 +166,7 @@
 		<IfFailedComments>The Active Directory forest does not meet the required functional level.</IfFailedComments>
 	</Test>
 
-	<Test>
+    <Test>
 		<Id>HW001</Id>
 		<Category>Hardware</Category>
 		<Name>Physical or Virtual</Name>
@@ -187,4 +187,16 @@
        	<IfWarningComments>One or more Exchange install volumes has between 15% and 30% free disk space.</IfWarningComments>		
        	<IfFailedComments>One or more Exchange install volumes has less than 15% free disk space.</IfFailedComments>        
 	</Test>
+
+	<Test>
+		<Id>HW002</Id>
+		<Category>Hardware</Category>
+		<Name>Server Power Management</Name>
+		<Description>Check that power management is set to High Performance.</Description>
+		<IfPassedComments>All Exchange servers' power management is set to High Performance.</IfPassedComments>
+		<IfFailedComments/>
+		<IfInfoComments/>
+		<IfWarningComments>One or more Exchange servers' power management is not set to High Performance.</IfWarningComments>
+	</Test>
+
 </Tests>
