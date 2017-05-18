@@ -178,6 +178,17 @@
 	</Test>
 
 	<Test>
+		<Id>Ad003</Id>
+		<Category>Active Directory</Category>
+		<Name>All DCs are GCs</Name>
+		<Description>Check that the all Active Directory Domain Controllers are Global Catalog servers.</Description>
+		<IfInfoComments></IfInfoComments>
+		<IfPassedComments>All Active Directory Domain Controllers are Global Catalog Servers.</IfPassedComments>
+		<IfWarningComments></IfWarningComments>
+		<IfFailedComments>One or more Active Directory Domain Controllers are not Global Catalog Servers.</IfFailedComments>
+	</Test>
+
+	<Test>
 		<Id>HW001</Id>
 		<Category>Hardware</Category>
 		<Name>Physical or Virtual</Name>
