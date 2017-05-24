@@ -275,6 +275,119 @@ Write-Verbose $msgString
 #This needs to be processed as a foreach to work in PS remoting
 $AllImapSettings = @($ExchangeServers | ForEach-Object {Get-ImapSettings -Server $_.Identity})
 
+# Gather server Pagefile information
+Foreach ($Server in $ExchangeServers) {
+    $Name = $Server.name
+    # CMI Queries - Test without WMI backup
+    $up=$true
+    #Check to see if the Exchange Server's PageFile is Managed
+    try {
+        $Page_Managed = (Get-ExACIMInstance -computerName $name -ClassName Win32_ComputerSystem).AutomaticManagedPagefile
+    } catch { 
+        $tryWMI = $true
+        Write-Verbose "$($TestID): Was not able to acquire information for $name via CIM"
+    }
+    if( $tryWMI ) {
+		## WMI depends on RPC. CIM depends on WinRM, but CIM failed, so we try WMI before we give up.
+        try {
+            $Page_Managed = (Get-ExAWmiObject -computer $name -Class Win32_ComputerSystem).AutomaticManagedPagefile
+        } catch {
+            Write-Verbose "$($TestID): Was not able to acquire information for $name via WMI"
+            $nulldata = $true
+        }
+    }
+    
+    Set-ExAServerProperty -Server $Name -Property "PagefileManaged" -Value $Page_Managed
+
+    If ($Page_Managed -eq $False) {
+
+        # Retrieve the Minimum PageFile size
+        try {
+            $Page_min = (Get-ExACIMInstance -ComputerName $name -ClassName win32_pagefilesetting -Property *).initialsize
+        }catch {
+            $tryWMI = $true
+            Write-Verbose "$($TestID): Was not able to acquire information for $name via CIM"
+        }
+        if( $tryWMI ) {
+		    ## WMI depends on RPC. CIM depends on WinRM, but CIM failed, so we try WMI before we give up.
+            try {
+                $Page_min = (Get-ExAWmiObject -Computer $name -Class win32_pagefilesetting -Property * -ErrorAction Stop).initialsize
+            } catch {
+                Write-Verbose "$($TestID): Was not able to acquire information for $name via WMI"
+                $nulldata = $true
+            }
+        }
+        # Retrieve the Maximum PageFile size
+        try {
+            $Page_max = (Get-ExACIMInstance -ComputerName $name -ClassName win32_pagefilesetting -Property * -ErrorAction Stop).maximumsize
+        }catch {
+            $tryWMI = $true
+            Write-Verbose "$($TestID): Was not able to acquire information for $name via CIM"
+        }
+        if( $tryWMI ) {
+		    ## WMI depends on RPC. CIM depends on WinRM, but CIM failed, so we try WMI before we give up.
+            try {
+                $Page_max = (Get-ExAWmiObject -Computer $name -Class win32_pagefilesetting -Property * -ErrorAction Stop).maximumsize
+            } catch {
+                Write-Verbose "$($TestID): Was not able to acquire information for $name via WMI"
+                $nulldata = $true
+            }
+        }
+        Set-ExAServerProperty -Server $Name -Property "PageMax" -Value $Page_Max
+        Set-ExAServerProperty -Server $Name -Property "PageMin" -Value $Page_Min
+    } Else {
+        $Page_max = "NA"
+        $Page_min = "NA"
+        Set-ExAServerProperty -Server $Name -Property "PageMax" -Value $Page_Max
+        Set-ExAServerProperty -Server $Name -Property "PageMin" -Value $Page_Min
+    }
+
+    # Retrieve the current PageFile size
+    try {
+        $Page_Current = (Get-ExACIMInstance -computername $name -classname Win32_PageFileUsage -ErrorAction Stop -property *).allocatedbasesize
+    }catch {
+        $tryWMI = $true
+        Write-Verbose "$($TestID): Was not able to acquire information for $name via CIM"
+    }
+    if( $tryWMI ) {
+		## WMI depends on RPC. CIM depends on WinRM, but CIM failed, so we try WMI before we give up.
+        try {
+            $Page_Current = (Get-ExAWmiObject -computer $name -class Win32_PageFileUsage -ErrorAction Stop -property *).allocatedbasesize
+        } catch {
+            Write-Verbose "$($TestID): Was not able to acquire information for $name via WMI"
+            $nulldata =$true
+        }
+    }
+    Set-ExAServerProperty -Server $Name -Property "CurrentPageFile" -Value $Page_Current
+    
+    # Retrieve the amount of RAM the Exchange Server has
+    try {
+        $RAMinMB = (Get-ExACIMInstance -computername $name -Classname win32_physicalmemory -ErrorAction Stop | measure-object -property capacity -sum).sum/1MB
+    }catch {
+        $tryWMI = $true
+        Write-Verbose "$($TestID): Was not able to acquire information for $name via CIM"}
+    if( $tryWMI ) {
+		## WMI depends on RPC. CIM depends on WinRM, but CIM failed, so we try WMI before we give up.
+        try {
+            $RAMinMB = (Get-ExAWmiObject -computer $name -Class win32_physicalmemory -ErrorAction Stop | measure-object -property capacity -sum).sum/1MB
+        } catch {
+            Write-Verbose "$($TestID): Was not able to acquire information for $name via WMI"
+            $nulldata =$true
+        }
+    }
+    Set-ExAServerProperty -Server $Name -Property "RAMinMB" -Value $RAMinMB
+
+    if ($nulldata) {
+        Set-ExAServerProperty -Server $Name -Property "Up" -Value $False
+        Set-ExAServerProperty -Server $Name -Property "Managed" -Value $False
+        Set-ExAServerProperty -Server $Name -Property "PageMax" -Value 0
+        Set-ExAServerProperty -Server $Name -Property "PageMin" -Value 0
+        Set-ExAServerProperty -Server $Name -Property "CurrentPageFile" -Value 0
+        Set-ExAServerProperty -Server $Name -Property "RAMinMB" -Value 0
+    } else {
+       Set-ExAServerProperty -Server $Name -Property "Up" -Value $True
+    }
+}
 
 #endregion -Basic Data Collection
 

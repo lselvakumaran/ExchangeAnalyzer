@@ -505,4 +505,60 @@ function Get-ExAWmiObject()
     }
 }
 
+# Lightweight wrapper over Get-CimInstance with error handling
+Function Get-ExACIMInstance()
+{    
+    [CmdletBinding()]
+    param
+    (
+        [parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Class,
+        [parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Computer,
+        [parameter(Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        [string[]]        
+        $Property,
+        [parameter(Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Filter
+    )
+
+    $ParameterSet = @{ 
+        Computer = $Computer
+        Class = $Class
+    }
+
+    if ($PSBoundParameters.ContainsKey('Property'))
+    {
+        $parameterSet.Add('Property', $Property)
+    }
+
+    if ($PSBoundParameters.ContainsKey('Filter'))
+    {
+        $parameterSet.Add('Filter', $Filter)
+    }
+
+    ##TODO:
+        # Computer down
+        # Access Denied
+
+    try
+    { 
+        Write-Debug "Invoking Get-CIMInstance for host '$Computer' and Class '$Class'"
+        Get-CIMInstance @parameterSet
+    }
+    catch
+    {
+        ##TODO
+        Write-Warning $_.Exception
+        Return $Null
+    }
+}
+
 Export-ModuleMember -Function * -Alias * -Variable *
