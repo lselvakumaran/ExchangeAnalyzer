@@ -470,7 +470,11 @@ function Get-ExAWmiObject()
         [parameter(Mandatory=$false)]
         [ValidateNotNullOrEmpty()]
         [string]
-        $Filter
+        $Filter,
+        [parameter(Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Namespace
     )
 
     $parameterSet = @{ 
@@ -488,6 +492,11 @@ function Get-ExAWmiObject()
         $parameterSet.Add('Filter', $Filter)
     }
 
+    if ($PSBoundParameters.ContainsKey('Namespace'))
+    {
+	    $parameterSet.Add('Namespace', $Namespace)
+    }
+
     ##TODO:
         # Computer down
         # Access Denied
@@ -502,6 +511,71 @@ function Get-ExAWmiObject()
         ##TODO
         Write-Warning $_.Exception
         return $null
+    }
+}
+
+# Lightweight wrapper over Get-CimInstance with error handling
+Function Get-ExACIMInstance()
+{    
+    [CmdletBinding()]
+    param
+    (
+        [parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Class,
+        [parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Computer,
+        [parameter(Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        [string[]]        
+        $Property,
+        [parameter(Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Filter,
+        [parameter(Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Namespace
+    )
+
+    $ParameterSet = @{ 
+        Computer = $Computer
+        Class = $Class
+    }
+
+    if ($PSBoundParameters.ContainsKey('Property'))
+    {
+        $parameterSet.Add('Property', $Property)
+    }
+
+    if ($PSBoundParameters.ContainsKey('Filter'))
+    {
+        $parameterSet.Add('Filter', $Filter)
+    }
+
+    if ($PSBoundParameters.ContainsKey('Namespace'))
+    {
+        $parameterSet.Add('Namespace', $Namespace)
+    }
+
+    ##TODO:
+        # Computer down
+        # Access Denied
+
+    try
+    { 
+        Write-Debug "Invoking Get-CIMInstance for host '$Computer' and Class '$Class'"
+        Get-CIMInstance @parameterSet
+    }
+    catch
+    {
+        ##TODO
+        Write-Warning $_.Exception
+        Return $Null
     }
 }
 
