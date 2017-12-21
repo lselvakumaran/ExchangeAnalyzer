@@ -75,7 +75,7 @@ Function Run-AD002()
     else
     {
         $MaxFunctionalLevel = 6
-        $MaxFunctionalLevelText = "Windows Server 2012 R2"
+        $MaxFunctionalLevelText = "Windows Server 2016"
     }
 
     Write-Verbose "The Forest Functional level must be:"
@@ -96,6 +96,7 @@ Function Run-AD002()
             4 {$fleveltext = "Windows Server 2008 R2"}
             5 {$fleveltext = "Windows Server 2012"}
             6 {$fleveltext = "Windows Server 2012 R2"}
+            7 {$fleveltext = "Windows Server 2016"}
         }
 
         if ($flevel -ge $MinFunctionalLevel -and $dlevel -le $MaxFunctionalLevel)
