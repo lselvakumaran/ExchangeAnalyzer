@@ -80,7 +80,7 @@ Function Run-CAS001()
                 {
                     $SiteECPInternalUrls += $CASECPUrl.ECPInternal.ToLower()
                 }
-                if (!($SiteECPExternalUrls -Contains $CASECPUrl.ECPInternal.ToLower()) -and ($CASECPUrl.ECPInternal.ToLower() -ne $null))
+                if (!($SiteECPExternalUrls -Contains $CASECPUrl.ECPExternal.ToLower()) -and ($CASECPUrl.ECPExternal.ToLower() -ne $null))
                 {
                     $SiteECPExternalUrls += $CASECPUrl.ECPExternal.ToLower()
                 }
